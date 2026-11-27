@@ -12,6 +12,8 @@ type PieceInterface interface {
 
 func (p *Piece) GetPosition() Position { return p.Position }
 
+func (pi *Piece) SetPosition(p Position) { pi.Position = p }
+
 func (p *Piece) Slide(b *Board, dirs []Position, maxSteps int8) []*Position {
 	var moves []*Position
 

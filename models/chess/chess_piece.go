@@ -19,6 +19,14 @@ type ChessPiece struct {
 	Kind Kind `json:"kind"`
 }
 
+type Piece interface {
+	common.PieceInterface
+	GetKind() Kind
+	SetPosition(common.Position)
+}
+
+func (p *ChessPiece) GetKind() Kind { return p.Kind }
+
 func NewChessPiece(kind Kind, x, y int8) ChessPiece {
 	return ChessPiece{
 		Piece: common.Piece{Position: common.Position{X: x, Y: y}},

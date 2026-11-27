@@ -5,17 +5,18 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/mbarolo/webp_backend/models"
 	"github.com/mbarolo/webp_backend/utils"
 )
 
 var upgrader = websocket.Upgrader{}
 
-func WebsocketHandler(c *gin.Context) {
-	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-	if err != nil {
-		utils.JsonResponse(c, http.StatusInternalServerError, "Error upgrading websocket connection: "+err.Error(), nil)
+func CreateGameHandler(c *gin.Context) {
+	game, ok := models.Games[c.Param("game")]
+	if !ok {
+		utils.JsonResponse(c, http.StatusNotFound, "Game not found", nil)
 		return
 	}
 
-	defer conn.Close()
+	upgrade, 
 }

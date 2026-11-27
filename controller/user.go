@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/go-chi/chi/v5"
+	"github.com/gin-gonic/gin"
 	"github.com/mbarolo/webp_backend/forms"
 	"github.com/mbarolo/webp_backend/services"
 	"github.com/mbarolo/webp_backend/utils"
@@ -21,14 +21,14 @@ import (
 // @Success      200  {object}  map[string]interface{}
 // @Failure      401  {object}  map[string]interface{}
 // @Router       /users/profile [get]
-func GetProfile(w http.ResponseWriter, r *http.Request) {
-	user, err := services.GetCurrentUser(r)
+func GetProfile(c *gin.Context) {
+	user, err := services.GetCurrentUser(c.Request)
 	if err != nil {
-		utils.JsonResponse(w, http.StatusUnauthorized, "Error al obtener el usuario autenticado: "+err.Error(), nil)
+		utils.JsonResponse(c, http.StatusUnauthorized, "Error al obtener el usuario autenticado: "+err.Error(), nil)
 		return
 	}
 
-	utils.JsonResponse(w, http.StatusOK, "Perfil obtenido", user)
+	utils.JsonResponse(c, http.StatusOK, "Perfil obtenido", user)
 }
 
 // GetAllUsers godoc
@@ -41,14 +41,14 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 // @Success      200  {object}  map[string]interface{}
 // @Failure      500  {object}  map[string]interface{}
 // @Router       /admin/users [get]
-func GetAllUsers(w http.ResponseWriter, r *http.Request) {
+func GetAllUsers(c *gin.Context) {
 	users, err := services.GetAllUsers()
 	if err != nil {
-		utils.JsonResponse(w, http.StatusInternalServerError, "Error al obtener los usuarios: "+err.Error(), nil)
+		utils.JsonResponse(c, http.StatusInternalServerError, "Error al obtener los usuarios: "+err.Error(), nil)
 		return
 	}
 
-	utils.JsonResponse(w, http.StatusOK, "Usuarios obtenidos", users)
+	utils.JsonResponse(c, http.StatusOK, "Usuarios obtenidos", users)
 }
 
 // GetUserById godoc
@@ -63,26 +63,26 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 // @Failure      400  {object}  map[string]interface{}
 // @Failure      500  {object}  map[string]interface{}
 // @Router       /admin/users/{id} [get]
-func GetUserById(w http.ResponseWriter, r *http.Request) {
-	idStr := chi.URLParam(r, "id")
+func GetUserById(c *gin.Context) {
+	idStr := c.Param("id")
 	if idStr == "" {
-		utils.JsonResponse(w, http.StatusBadRequest, "Parametro id no encontrado", nil)
+		utils.JsonResponse(c, http.StatusBadRequest, "Parametro id no encontrado", nil)
 		return
 	}
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		utils.JsonResponse(w, http.StatusInternalServerError, "Error al convertir el parametro id: "+err.Error(), nil)
+		utils.JsonResponse(c, http.StatusInternalServerError, "Error al convertir el parametro id: "+err.Error(), nil)
 		return
 	}
 
 	user, err := services.GetUserById(int64(id))
 	if err != nil {
-		utils.JsonResponse(w, http.StatusInternalServerError, "Error al obtener el usuario: "+err.Error(), nil)
+		utils.JsonResponse(c, http.StatusInternalServerError, "Error al obtener el usuario: "+err.Error(), nil)
 		return
 	}
 
-	utils.JsonResponse(w, http.StatusOK, "Usuario obtenido", user)
+	utils.JsonResponse(c, http.StatusOK, "Usuario obtenido", user)
 }
 
 // UpdateProfile godoc
@@ -98,26 +98,26 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 // @Failure      401   {object}  map[string]interface{}
 // @Failure      500   {object}  map[string]interface{}
 // @Router       /users/profile [patch]
-func UpdateProfile(w http.ResponseWriter, r *http.Request) {
-	user, err := services.GetCurrentUser(r)
+func UpdateProfile(c *gin.Context) {
+	user, err := services.GetCurrentUser(c.Request)
 	if err != nil {
-		utils.JsonResponse(w, http.StatusUnauthorized, "Error al obtener el usuario autenticado: "+err.Error(), nil)
+		utils.JsonResponse(c, http.StatusUnauthorized, "Error al obtener el usuario autenticado: "+err.Error(), nil)
 		return
 	}
 
 	var userForm *forms.UserForm
-	if err := json.NewDecoder(r.Body).Decode(&userForm); err != nil {
-		utils.JsonResponse(w, http.StatusBadRequest, "Error al decodificar el cuerpo de la solicitud: "+err.Error(), nil)
+	if err := json.NewDecoder(c.Request.Body).Decode(&userForm); err != nil {
+		utils.JsonResponse(c, http.StatusBadRequest, "Error al decodificar el cuerpo de la solicitud: "+err.Error(), nil)
 		return
 	}
 
 	updatedUser, err := services.UpdateUser(user.Id, userForm)
 	if err != nil {
-		utils.JsonResponse(w, http.StatusInternalServerError, "Error al actualizar el usuario: "+err.Error(), nil)
+		utils.JsonResponse(c, http.StatusInternalServerError, "Error al actualizar el usuario: "+err.Error(), nil)
 		return
 	}
 
-	utils.JsonResponse(w, http.StatusOK, "Usuario actualizado correctamente", updatedUser)
+	utils.JsonResponse(c, http.StatusOK, "Usuario actualizado correctamente", updatedUser)
 }
 
 // UpdateUser godoc
@@ -133,30 +133,30 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 // @Failure      400   {object}  map[string]interface{}
 // @Failure      500   {object}  map[string]interface{}
 // @Router       /admin/users/{id} [patch]
-func UpdateUser(w http.ResponseWriter, r *http.Request) {
-	idStr := chi.URLParam(r, "id")
+func UpdateUser(c *gin.Context) {
+	idStr := c.Param("id")
 	if idStr == "" {
-		utils.JsonResponse(w, http.StatusBadRequest, "Parametro id no encontrado", nil)
+		utils.JsonResponse(c, http.StatusBadRequest, "Parametro id no encontrado", nil)
 		return
 	}
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		utils.JsonResponse(w, http.StatusInternalServerError, "Error al convertir el parametro id: "+err.Error(), nil)
+		utils.JsonResponse(c, http.StatusInternalServerError, "Error al convertir el parametro id: "+err.Error(), nil)
 		return
 	}
 
 	var userForm *forms.UserForm
-	if err := json.NewDecoder(r.Body).Decode(&userForm); err != nil {
-		utils.JsonResponse(w, http.StatusBadRequest, "Error al decodificar el cuerpo de la solicitud: "+err.Error(), nil)
+	if err := json.NewDecoder(c.Request.Body).Decode(&userForm); err != nil {
+		utils.JsonResponse(c, http.StatusBadRequest, "Error al decodificar el cuerpo de la solicitud: "+err.Error(), nil)
 		return
 	}
 
 	updatedUser, err := services.UpdateUser(int64(id), userForm)
 	if err != nil {
-		utils.JsonResponse(w, http.StatusInternalServerError, "Error al actualizar el usuario: "+err.Error(), nil)
+		utils.JsonResponse(c, http.StatusInternalServerError, "Error al actualizar el usuario: "+err.Error(), nil)
 		return
 	}
 
-	utils.JsonResponse(w, http.StatusOK, "Usuario actualizado correctamente", updatedUser)
+	utils.JsonResponse(c, http.StatusOK, "Usuario actualizado correctamente", updatedUser)
 }

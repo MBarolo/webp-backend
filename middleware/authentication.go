@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/mbarolo/webp_backend/models"
 	"github.com/mbarolo/webp_backend/utils"
@@ -89,33 +90,35 @@ func validateToken(tokenString string) (*Claims, error) {
 }
 
 // Middleware que valida el token enviado, si no es encontrado retorna 401
-func AuthMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		header := r.Header.Get("Authorization")
-		token := ""
+func AuthMiddleware(c *gin.Context) {
+	header := c.GetHeader("Authorization")
+	token := ""
 
-		if header != "" {
-			parts := strings.Split(header, " ")
-			if len(parts) == 2 && parts[0] == "Bearer" {
-				token = parts[1]
-			} else {
-				utils.JsonResponse(w, http.StatusUnauthorized, "Estructura de header de autorización inesperada", nil)
-				return
-			}
+	if header != "" {
+		parts := strings.Split(header, " ")
+		if len(parts) == 2 && parts[0] == "Bearer" {
+			token = parts[1]
 		} else {
-			utils.JsonResponse(w, http.StatusUnauthorized, "Token no proporcionado", nil)
+			utils.JsonResponse(c, http.StatusUnauthorized, "Estructura de header de autorización inesperada", nil)
+			c.Abort()
 			return
 		}
+	} else {
+		utils.JsonResponse(c, http.StatusUnauthorized, "Token no proporcionado", nil)
+		c.Abort()
+		return
+	}
 
-		claims, err := validateToken(token)
-		if err != nil {
-			utils.JsonResponse(w, http.StatusUnauthorized, "Error al validar el token: "+err.Error(), nil)
-			return
-		}
+	claims, err := validateToken(token)
+	if err != nil {
+		utils.JsonResponse(c, http.StatusUnauthorized, "Error al validar el token: "+err.Error(), nil)
+		c.Abort()
+		return
+	}
 
-		ctx := context.WithValue(r.Context(), "claims", claims)
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
+	ctx := context.WithValue(c.Request.Context(), "claims", claims)
+	c.Request = c.Request.WithContext(ctx)
+	c.Next()
 }
 
 // validateAdminCredentials compara las credenciales del encabezado de autorización con las del .env
@@ -133,29 +136,31 @@ func validateAdminCredentials(creds string) (bool, error) {
 }
 
 // Middleware para rutas admin
-func AdminMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		header := r.Header.Get("Authorization")
-		creds := ""
-		if header != "" {
-			parts := strings.Split(header, " ")
-			if len(parts) == 2 && parts[0] == "Basic" {
-				creds = parts[1]
-			} else {
-				utils.JsonResponse(w, http.StatusUnauthorized, "Estructura de header de autorización inesperada", nil)
-				return
-			}
-		}
-
-		if valid, err := validateAdminCredentials(creds); err != nil {
-			utils.JsonResponse(w, http.StatusUnauthorized, "Error al validar las credenciales"+err.Error(), nil)
-			return
-		} else if !valid {
-			utils.JsonResponse(w, http.StatusUnauthorized, "Credenciales inválidas", nil)
+func AdminMiddleware(c *gin.Context) {
+	header := c.GetHeader("Authorization")
+	creds := ""
+	if header != "" {
+		parts := strings.Split(header, " ")
+		if len(parts) == 2 && parts[0] == "Basic" {
+			creds = parts[1]
+		} else {
+			utils.JsonResponse(c, http.StatusUnauthorized, "Estructura de header de autorización inesperada", nil)
+			c.Abort()
 			return
 		}
+	}
 
-		ctx := context.WithValue(r.Context(), "claims", "")
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
+	if valid, err := validateAdminCredentials(creds); err != nil {
+		utils.JsonResponse(c, http.StatusUnauthorized, "Error al validar las credenciales"+err.Error(), nil)
+		c.Abort()
+		return
+	} else if !valid {
+		utils.JsonResponse(c, http.StatusUnauthorized, "Credenciales inválidas", nil)
+		c.Abort()
+		return
+	}
+
+	ctx := context.WithValue(c.Request.Context(), "claims", "")
+	c.Request = c.Request.WithContext(ctx)
+	c.Next()
 }

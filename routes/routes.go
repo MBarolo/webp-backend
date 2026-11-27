@@ -1,18 +1,12 @@
 package routes
 
 import (
-	"net/http"
-
-	"github.com/go-chi/chi/v5"
-	"github.com/mbarolo/webp_backend/utils"
+	"github.com/gin-gonic/gin"
 )
 
-func InitRoutes(r chi.Router) {
-	r.Route("/api/v1", func(r chi.Router) {
-		InitUserRoutes(r)
+func InitRoutes(r *gin.Engine) {
+	api := r.Group("/api/v1")
 
-		r.Get("/status", func(w http.ResponseWriter, r *http.Request) {
-			utils.JsonResponse(w, http.StatusOK, "ok", nil)
-		})
-	})
+	InitUserRoutes(api)
+	InitWebsocketRoutes(api)
 }

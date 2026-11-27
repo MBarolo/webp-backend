@@ -1,13 +1,11 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/go-chi/chi/v5"
-	chimiddleware "github.com/go-chi/chi/v5/middleware"
+	"github.com/gin-gonic/gin"
 	httpSwagger "github.com/swaggo/http-swagger"
 
 	"github.com/mbarolo/webp_backend/config"
@@ -28,30 +26,25 @@ func main() {
 
 	defer config.CloseDB()
 
-	// se configura go-chi
-	app := chi.NewRouter()
-	app.Use(chimiddleware.Logger)
-	app.Use(chimiddleware.Recoverer)
+	app := gin.Default()
 
-	// Swagger para documentacion de api
-	app.Get("/swagger/*", httpSwagger.Handler(
+	// Swagger: tu handler actual es net/http, gin.WrapH lo adapta
+	app.GET("/swagger/*any", gin.WrapH(httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
-	))
+	)))
 
-	// se define la response default para 404
-	app.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-type", "application/json")
-		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(map[string]string{"message": "Servicio no encontrado."})
+	// 404 por defecto
+	app.NoRoute(func(c *gin.Context) {
+		c.JSON(http.StatusNotFound, gin.H{"message": "Servicio no encontrado."})
 	})
 
-	// registramos las rutas en la aplicación
 	routes.InitRoutes(app)
-	chi.Walk(app, func(method string, route string, handler http.Handler, middlewares ...func(http.Handler) http.Handler) error {
-		log.Printf("[%s] %s", method, route)
-		return nil
-	})
+
+	// equivalente a chi.Walk
+	for _, route := range app.Routes() {
+		log.Printf("[%s] %s", route.Method, route.Path)
+	}
 
 	log.Printf("Server starting on %s", os.Getenv("ADDR"))
-	http.ListenAndServe(os.Getenv("ADDR"), app)
+	app.Run(os.Getenv("ADDR"))
 }

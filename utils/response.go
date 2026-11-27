@@ -1,14 +1,12 @@
 package utils
 
 import (
-	"encoding/json"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-func JsonResponse(w http.ResponseWriter, code int, message string, data interface{}) {
-	w.Header().Set("Content-type", "application/json")
-	w.WriteHeader(code)
-
+func JsonResponse(c *gin.Context, code int, message string, data interface{}) {
 	var res map[string]interface{}
 	if code >= http.StatusOK && code < http.StatusMultipleChoices {
 		// Códigos 2xx (éxito)
@@ -36,5 +34,5 @@ func JsonResponse(w http.ResponseWriter, code int, message string, data interfac
 		}
 	}
 
-	json.NewEncoder(w).Encode(res)
+	c.JSON(code, res)
 }

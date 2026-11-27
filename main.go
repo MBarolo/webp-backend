@@ -27,8 +27,6 @@ func main() {
 	defer config.CloseDB()
 
 	app := gin.Default()
-
-	// Swagger: tu handler actual es net/http, gin.WrapH lo adapta
 	app.GET("/swagger/*any", gin.WrapH(httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
 	)))
@@ -40,7 +38,6 @@ func main() {
 
 	routes.InitRoutes(app)
 
-	// equivalente a chi.Walk
 	for _, route := range app.Routes() {
 		log.Printf("[%s] %s", route.Method, route.Path)
 	}

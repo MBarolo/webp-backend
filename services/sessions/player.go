@@ -1,8 +1,7 @@
-package matches
+package sessions
 
 import "github.com/gorilla/websocket"
 
 type Player struct {
-	UserId int64
-	Conn   *websocket.Conn
+	Conn *websocket.Conn
 }

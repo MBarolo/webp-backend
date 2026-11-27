@@ -1,6 +1,6 @@
 package forms
 
-import "github.com/mbarolo/test_back/models"
+import "github.com/mbarolo/webp_backend/models"
 
 type UserForm struct {
 	Email          string `json:"email,omitempty"`

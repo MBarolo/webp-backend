@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/mbarolo/test_back/middleware"
-	"github.com/mbarolo/test_back/models"
+	"github.com/mbarolo/webp_backend/middleware"
+	"github.com/mbarolo/webp_backend/models"
 )
 
 func GetCurrentUser(r *http.Request) (*models.User, error) {

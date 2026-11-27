@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/mbarolo/test_back/forms"
-	"github.com/mbarolo/test_back/models"
+	"github.com/mbarolo/webp_backend/forms"
+	"github.com/mbarolo/webp_backend/models"
 )
 
 func GetAllUsers() ([]*models.User, error) {

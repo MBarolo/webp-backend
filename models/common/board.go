@@ -1,7 +1,10 @@
 package common
 
+const CHESS_BOARD_SIZE = 8
+
 type Board struct {
-	Size int8 `json:"size"`
+	Size   int8             `json:"size"`
+	Pieces []PieceInterface `json:"pieces"`
 }
 
 func (b *Board) InBounds(pos Position) bool {

@@ -1,8 +1,8 @@
 package services
 
 import (
-	"github.com/mbarolo/test_back/config"
-	"github.com/mbarolo/test_back/repository"
+	"github.com/mbarolo/webp_backend/config"
+	"github.com/mbarolo/webp_backend/repository"
 )
 
 var sqliteConnection = config.NewSQLiteConnection()

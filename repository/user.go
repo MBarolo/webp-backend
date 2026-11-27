@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/mbarolo/test_back/models"
-	"github.com/mbarolo/test_back/utils"
+	"github.com/mbarolo/webp_backend/models"
+	"github.com/mbarolo/webp_backend/utils"
 )
 
 type UserRepository struct {

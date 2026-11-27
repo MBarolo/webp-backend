@@ -1,4 +1,4 @@
-module github.com/mbarolo/test_back
+module github.com/mbarolo/webp_backend
 
 go 1.25.7
 

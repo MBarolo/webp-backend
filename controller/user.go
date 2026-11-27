@@ -6,9 +6,9 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/mbarolo/test_back/forms"
-	"github.com/mbarolo/test_back/services"
-	"github.com/mbarolo/test_back/utils"
+	"github.com/mbarolo/webp_backend/forms"
+	"github.com/mbarolo/webp_backend/services"
+	"github.com/mbarolo/webp_backend/utils"
 )
 
 // GetProfile godoc

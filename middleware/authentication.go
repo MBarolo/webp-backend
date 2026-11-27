@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/mbarolo/test_back/models"
-	"github.com/mbarolo/test_back/utils"
+	"github.com/mbarolo/webp_backend/models"
+	"github.com/mbarolo/webp_backend/utils"
 )
 
 type Claims struct {

@@ -10,10 +10,10 @@ import (
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 	httpSwagger "github.com/swaggo/http-swagger"
 
-	"github.com/mbarolo/test_back/config"
-	_ "github.com/mbarolo/test_back/docs"
-	"github.com/mbarolo/test_back/routes"
-	"github.com/mbarolo/test_back/utils"
+	"github.com/mbarolo/webp_backend/config"
+	_ "github.com/mbarolo/webp_backend/docs"
+	"github.com/mbarolo/webp_backend/routes"
+	"github.com/mbarolo/webp_backend/utils"
 )
 
 func main() {

@@ -1,6 +1,6 @@
 package chess
 
-import "github.com/mbarolo/test_back/models/common"
+import "github.com/mbarolo/webp_backend/models/common"
 
 var _ common.PieceInterface = (*Bishop)(nil)
 

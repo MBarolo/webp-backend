@@ -2,8 +2,8 @@ package routes
 
 import (
 	"github.com/go-chi/chi/v5"
-	"github.com/mbarolo/test_back/controller"
-	"github.com/mbarolo/test_back/middleware"
+	"github.com/mbarolo/webp_backend/controller"
+	"github.com/mbarolo/webp_backend/middleware"
 )
 
 func InitUserRoutes(r chi.Router) {

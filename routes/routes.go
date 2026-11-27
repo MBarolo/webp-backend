@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/mbarolo/test_back/utils"
+	"github.com/mbarolo/webp_backend/utils"
 )
 
 func InitRoutes(r chi.Router) {
